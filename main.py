@@ -1,6 +1,7 @@
 import urllib.request
 import urllib.parse
 import ast
+import sys
 
 def get_student_credit(username, password):
     url = 'http://db.nca.edu.ni/api/api_ewapp.php?'
@@ -27,5 +28,8 @@ while True:
     #deals with incorrect values without creating an error
     except ValueError:
         print("Incorrect username or password")
+    except KeyboardInterrupt:
+        sys.exit(0)
+        
                                                       
 
