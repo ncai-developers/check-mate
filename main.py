@@ -19,6 +19,13 @@ def get_student_credit(username, password):
         # gets the value of 'credit_student' and stores it into the variable student_credit
         print(student_credit)
         # student credit is the amount of money in the account
+#creates an infinite loop
+while True:
+    # main function that takes the NCA username and password everyone has
+    try:
+        get_student_credit(input("Username: "), input("Password:"))
+    #deals with incorrect values without creating an error
+    except ValueError:
+        print("Incorrect username or password")
+                                                      
 
-get_student_credit(input("Username: "), input("Password: "))
-# main function that takes the NCA username and password everyone has
