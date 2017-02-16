@@ -2,6 +2,7 @@ import urllib.request
 import urllib.parse
 import ast
 import getpass
+import sys
 
 
 def get_student_credit(username, password):
@@ -24,11 +25,16 @@ def get_student_credit(username, password):
         if 'null' in page_str:
             print("Error with login, please try again.")
             # python doesn't know what null means, so it cannot be evaluated
-            # any typos will create null, thus we know there is an error
+            # any typos will create null, thus raising an exception, so we'll
+            # end the function in this if statement
         else:
             page_dict = ast.literal_eval(page_str)
             credit_student_balance = page_dict['credit_student']
             print(credit_student_balance)
 
-get_student_credit(input("Username: "), getpass.getpass())
-# getpass is exactly like input() but does not echo the typed characters, hiding it
+while True:
+    try:
+        get_student_credit(input("Username: "), getpass.getpass())
+    except KeyboardInterrupt:
+        sys.exit(0)
+        # Control-C will raise a KeyboardInterrupt exception, our method of quitting
