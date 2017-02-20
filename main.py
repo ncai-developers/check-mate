@@ -38,4 +38,4 @@ while True:
         # getpass is the same as input("Password: "), but you won't see what you type
     except KeyboardInterrupt:
         sys.exit(0)
-        # Control-C will raise a KeyboardInterrupt exception, our method of quitting
+        # Control-C will raise a KeyboardInterrupt exception, our method of quittin
