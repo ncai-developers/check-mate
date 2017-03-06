@@ -1,41 +1,63 @@
 import urllib.request
 import urllib.parse
 import ast
-import getpass
-import sys
+import tkinter as tk
 
 
 def get_student_credit(username, password):
-    # function that takes the NCA username and password, and outputs the credit student balance
-    
+    # function that takes the NCA username and password, and returns the balance
+
     api = 'http://db.nca.edu.ni/api/api_ewapp.php?'
     data = {
         'mode': 'student',
         'query': 'login',
         'username': username,
         'password': password,
-        }
+    }
     url = api + urllib.parse.urlencode(data)
     # data must be encoded for url to function properly
-    
-    with urllib.request.urlopen(url) as response:
-        page_raw = response.read()
-        page_str = page_raw.decode()
-        
-        if 'null' in page_str:
-            print("Error with login, please try again.")
-            # python doesn't know what null means, so it cannot be evaluated
-            # any typos will create null, thus raising an exception, so we'll
-            # end the function by looking for null in this if statement
-        else:
-            page_dict = ast.literal_eval(page_str)
-            credit_student_balance = page_dict['credit_student']
-            print("Student Credit: ${}".format(credit_student_balance))
 
-while True:
-    try:
-        get_student_credit(input("Username: "), getpass.getpass("Password: "))
-        # getpass is the same as input("Password: "), but you won't see what you type
-    except KeyboardInterrupt:
-        sys.exit(0)
-        # Control-C will raise a KeyboardInterrupt exception, our method of quittin
+    with urllib.request.urlopen(url) as response:
+        page_raw = response.read()      # get page source; but it's encoded
+        page_str = page_raw.decode()    # decode the source; now a string
+
+        if 'null' in page_str:
+            return "Error with login, please try again."
+            # when there's a login error, nulls will be present
+            # we can check a login error by checking for nulls
+        else:
+            page_dict = ast.literal_eval(page_str)  # evaluate the page str; now it's a python dictionary
+            credit_student_balance = page_dict['credit_student']  # get value of key 'credit_student'
+            return "Student Credit: ${} \n".format(credit_student_balance)  # return the balance
+
+
+class Application(tk.Frame):  # for there's only one frame, so this will be the main one
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        self.init_window()  # after initial setup; we now setup the window and its parts
+
+    def init_window(self):
+        def display_credit():  # use our get_student_credit function and output it to the text1 Tk variable
+            try:
+                output = get_student_credit(entry_username.get(), entry_password.get())
+            except SyntaxError:  # If the entries are empty and you use get(), returns SyntaxError
+                output = 'Please enter username and password.'
+            text1.config(text=output)
+
+        entry_username = tk.Entry(self)  # creating the Tk widgets
+        entry_password = tk.Entry(self, show='*')
+        text1 = tk.Message(self, width='200')
+        button_get_credit = tk.Button(self, text="Fetch Credit", command=display_credit)
+
+        self.master.title("Student Credit")
+        self.pack(fill='both', expand=1)  # displaying the Tk widgets with pack()
+        entry_username.pack()
+        entry_password.pack()
+        button_get_credit.pack()
+        text1.pack()
+
+root = tk.Tk()
+root.geometry("250x100")  # sets window size
+app = Application(root)
+root.mainloop()  # this kicks off tkinter window
