@@ -45,5 +45,14 @@ def get_credit_with_login(username, password):
 # gets an id as param
 # returns a dictionary with name, balance, id, and picture in base64
 def get_data(id):
-    response = requests.get(api_url + id).json()
-    return response
+    try:
+        response = requests.get(api_url + id).json()
+        return response
+    except requests.exceptions.RequestException as e:
+        print(e)
+        return e
+
+
+while True:
+    data = get_data(input("id: "))
+    print(data["name"], data["balance"])
