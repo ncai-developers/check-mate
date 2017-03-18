@@ -1,5 +1,6 @@
 import urllib.request
 import urllib.parse
+import urllib.error
 import ast
 import tkinter as tk
 
@@ -27,8 +28,9 @@ def get_student_credit(username, password):
             # we can check a login error by checking for nulls
         else:
             page_dict = ast.literal_eval(page_str)  # evaluate the page str; now it's a python dictionary
-            credit_student_balance = page_dict['credit_student']  # get value of key 'credit_student'
-            return "Student Credit: ${} \n".format(credit_student_balance)  # return the balance
+            credit_student = page_dict['credit_student']  # get value of key 'credit_student'
+            credit_family = page_dict['credit_family'] # get value of key 'credit_family'
+            return "Student Credit: ${} \nFamily Credit:   ${}".format(credit_student, credit_family)
 
 
 class Application(tk.Frame):  # for there's only one frame, so this will be the main one
@@ -43,6 +45,9 @@ class Application(tk.Frame):  # for there's only one frame, so this will be the 
                 output = get_student_credit(entry_username.get(), entry_password.get())
             except SyntaxError:  # If the entries are empty and you use get(), returns SyntaxError
                 output = 'Please enter username and password.'
+            except urllib.error.URLError:
+                output = 'No internet connection.'
+
             text1.config(text=output)
 
         entry_username = tk.Entry(self)  # creating the Tk widgets
