@@ -19,11 +19,15 @@ class Application(tk.Frame):  # for there's only one frame, so this will be the 
 
         def display_data():
             json = api.get_data( entry_id.get() )
-            try:
-                text = json["name"] + ": " + str(json["balance"])
-            except KeyError as e:
-                print(e, "key not found in response")
-                text = "Wrong ID. Try again"
+            if len(json.keys()) != 0:
+                try:
+                    text = json["name"] + ": " + str(json["balance"])
+                except KeyError as e:
+                    print(e, "key not found in response")
+                    text = "Wrong ID. Try again"
+            else:
+                text = "Network Error"
+
             balance.config(text=text)
 
         # creating the Tk widgets

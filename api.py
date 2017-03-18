@@ -47,7 +47,10 @@ def get_credit_with_login(username, password):
 def get_data(id):
     try:
         response = requests.get(api_url + id).json()
-        return response
+        if len(response.keys()) != 0:
+            return response
+        else:
+            return {"id not found": True}
     except requests.exceptions.RequestException as e:
         print(e)
-        return e
+        return {}
