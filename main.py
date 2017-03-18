@@ -9,27 +9,36 @@ class Application(tk.Frame):  # for there's only one frame, so this will be the 
         self.init_window()  # after initial setup; we now setup the window and its parts
 
     def init_window(self):
-        def display_credit():  # use our get_student_credit function and output it to the text1 Tk variable
+        def display_credit():  # use our get_student_credit function and output it to the balance Tk variable
             try:
                 output = api.get_credit_with_login(entry_username.get(), entry_password.get())
             except SyntaxError:
                 # This happens when the entries are empty
                 output = 'Please enter username and password.'
-            text1.config(text=output)
+            balance.config(text=output)
 
-        entry_username = tk.Entry(self)  # creating the Tk widgets
-        entry_password = tk.Entry(self, show='*')
-        text1 = tk.Message(self, width='200')
-        button_get_credit = tk.Button(self, text="Fetch Credit", command=display_credit)
+        def display_data():
+            json = api.get_data( entry_id.get() )
+            try:
+                text = json["name"] + ": " + str(json["balance"])
+            except KeyError as e:
+                print(e, "key not found in response")
+                text = "Wrong ID. Try again"
+            balance.config(text=text)
+
+        # creating the Tk widgets
+        entry_id = tk.Entry(self)
+        balance = tk.Message(self, width='200')
+        button_get_credit = tk.Button(self, text="Fetch Credit", command=display_data)
 
         self.master.title("Student Credit")
-        self.pack(fill='both', expand=1)  # displaying the Tk widgets with pack()
-        entry_username.pack()
-        entry_password.pack()
+        # displaying the Tk widgets with pack()
+        self.pack(fill='both', expand=1)
+        entry_id.pack()
         button_get_credit.pack()
-        text1.pack()
+        balance.pack()
 
 root = tk.Tk()
-root.geometry("250x100")  # sets window size
+root.geometry("350x200")  # sets window size
 app = Application(root)
 root.mainloop()  # this kicks off tkinter window

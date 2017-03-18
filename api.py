@@ -51,8 +51,3 @@ def get_data(id):
     except requests.exceptions.RequestException as e:
         print(e)
         return e
-
-
-while True:
-    data = get_data(input("id: "))
-    print(data["name"], data["balance"])
