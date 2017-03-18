@@ -1,0 +1,13 @@
+{
+  "name": "check-mate",
+  "version": "1.0.0",
+  "repository": "https://github.com/ncai-developers/check-mate.git",
+  "author": "ncai-developers",
+  "license": "MIT",
+  "devDependencies": {
+    "json-server": "^0.9.6"
+  },
+  "scripts": {
+    "api": "json-server db.json --watch"
+  }
+}
