@@ -2,11 +2,14 @@ import urllib.request
 import urllib.parse
 import urllib.error
 import ast
+import requests
 
 # Important Note:
 # the functions here serve to use different APIs
 # to change which function is used, navigate to main.py and change the function there
 # I (Lacayo) will be using login instead of mock for my GUI until mock is up and running
+
+api_url = "http://localhost:3000/api/"
 
 def get_credit_with_login(username, password):
     # function using NCAI login to get credit_student and credit_family
@@ -39,10 +42,8 @@ def get_credit_with_login(username, password):
     except urllib.error.URLError:
         return 'No internet connection.'
 
-def get_credit_with_mock():
-    # function for use with our mock API system
-    pass
-
-def get_credit_with_scanner():
-    # function for use with the real API system
-    pass
+# gets an id as param
+# returns a dictionary with name, balance, id, and picture in base64
+def get_data(id):
+    response = requests.get(api_url + id).json()
+    return response
