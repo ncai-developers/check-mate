@@ -6,7 +6,7 @@ import requests
 # to change which function is used, navigate to main.py and change the function there
 # I (Lacayo) will be using login instead of mock for my GUI until mock is up and running
 
-api_url = "http://localhost:3000/api/"
+api = "http://localhost:3000/api/"
 
 def get_credit_with_mock(user_id):
     # function using NCAI login to get credit_student and credit_family
