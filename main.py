@@ -9,40 +9,28 @@ class Application(tk.Frame):  # for there's only one frame, so this will be the 
         self.init_window()  # after initial setup; we now setup the window and its parts
 
     def init_window(self):
-        def display_credit():  # use our get_student_credit function and output it to the balance Tk variable
-            try:
-                output = api.get_credit_with_login(entry_username.get(), entry_password.get())
-            except SyntaxError:
-                # This happens when the entries are empty
-                output = 'Please enter username and password.'
-            balance.config(text=output)
+        def display_credit():
+            output = api.get_credit_with_mock(entry_id.get())
+            message_box.config(text=output)
 
-        def display_data():
-            json = api.get_data( entry_id.get() )
-            if len(json.keys()) != 0:
-                try:
-                    text = json["name"] + ": " + str(json["balance"])
-                except KeyError as e:
-                    print(e, "key not found in response")
-                    text = "Wrong ID. Try again"
-            else:
-                text = "Network Error"
+        def display_credit_cords():
+            output = api.get_credit_in_cords_with_mock(entry_id.get())
+            message_box.config(text=output)
 
-            balance.config(text=text)
 
-        # creating the Tk widgets
         entry_id = tk.Entry(self)
-        balance = tk.Message(self, width='200')
-        button_get_credit = tk.Button(self, text="Fetch Credit", command=display_data)
+        button_get = tk.Button(self, text="Get Balance", command=display_credit)
+        message_box = tk.Label(self)
 
-        self.master.title("Student Credit")
-        # displaying the Tk widgets with pack()
         self.pack(fill='both', expand=1)
         entry_id.pack()
-        button_get_credit.pack()
-        balance.pack()
+        button_get.pack()
+        message_box.pack()
 
-root = tk.Tk()
-root.geometry("350x200")  # sets window size
-app = Application(root)
-root.mainloop()  # this kicks off tkinter window
+if __name__ == '__main__':
+    root = tk.Tk()
+    root.overrideredirect(1)  # makes the window actually seem "full screen"
+    root.geometry("{}x{}".format(root.winfo_screenwidth(), root.winfo_screenheight()))
+    # gets the size of the display and sets the screen size to those values (covers the whole display)
+    app = Application(root)
+    root.mainloop()
