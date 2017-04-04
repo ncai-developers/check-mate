@@ -1,63 +1,48 @@
-import urllib.request
-import urllib.parse
-import ast
 import tkinter as tk
+import api
+import pages
 
 
-def get_student_credit(username, password):
-    # function that takes the NCA username and password, and returns the balance
+class Application(tk.Tk):  # for there's only one frame, so this will be the main one
 
-    api = 'http://db.nca.edu.ni/api/api_ewapp.php?'
-    data = {
-        'mode': 'student',
-        'query': 'login',
-        'username': username,
-        'password': password,
-    }
-    url = api + urllib.parse.urlencode(data)
-    # data must be encoded for url to function properly
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
 
-    with urllib.request.urlopen(url) as response:
-        page_raw = response.read()      # get page source; but it's encoded
-        page_str = page_raw.decode()    # decode the source; now a string
+        # self.overrideredirect(1)  # enables full-screen functionality, but not change screen size
+        # self.geometry("{}x{}".format(tk.Tk.winfo_screenwidth(self), tk.Tk.winfo_screenheight(self)))
+        self.geometry("400x400")
 
-        if 'null' in page_str:
-            return "Error with login, please try again."
-            # when there's a login error, nulls will be present
-            # we can check a login error by checking for nulls
-        else:
-            page_dict = ast.literal_eval(page_str)  # evaluate the page str; now it's a python dictionary
-            credit_student_balance = page_dict['credit_student']  # get value of key 'credit_student'
-            return "Student Credit: ${} \n".format(credit_student_balance)  # return the balance
+        self.container = tk.Frame(self)
+        self.container.pack(side="top", fill="both", expand=True)
+        self.container.grid_rowconfigure(0, weight=1)
+        self.container.grid_columnconfigure(0, weight=1)
 
+        self.frames = {}
+        self.load_frames((pages.Welcome, pages.Balance, pages.Product, pages.ThankYou))
 
-class Application(tk.Frame):  # for there's only one frame, so this will be the main one
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.master = master
-        self.init_window()  # after initial setup; we now setup the window and its parts
+        self.show_frame("Welcome")
 
-    def init_window(self):
-        def display_credit():  # use our get_student_credit function and output it to the text1 Tk variable
-            try:
-                output = get_student_credit(entry_username.get(), entry_password.get())
-            except SyntaxError:  # If the entries are empty and you use get(), returns SyntaxError
-                output = 'Please enter username and password.'
-            text1.config(text=output)
+    def load_frames(self, frames):
+        """
+        This fills self.frames by cycling through all of the pages created in pages.py
+        __name__: instance
+        display each frame using grid()
+        """
+        for F in frames:
+            page_name = F.__name__
+            frame = F(parent=self.container, controller=self)
+            self.frames[page_name] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
 
-        entry_username = tk.Entry(self)  # creating the Tk widgets
-        entry_password = tk.Entry(self, show='*')
-        text1 = tk.Message(self, width='200')
-        button_get_credit = tk.Button(self, text="Fetch Credit", command=display_credit)
+    def show_frame(self, page_name):
+        """
+        Order matters; each frame is shown, but only one can be displayed.
+        To move a frame to the top of the order (thus display it), call
+        this function to load the page using it's name, e.g. "Welcome"
+        """
+        frame = self.frames[page_name]
+        frame.tkraise()
 
-        self.master.title("Student Credit")
-        self.pack(fill='both', expand=1)  # displaying the Tk widgets with pack()
-        entry_username.pack()
-        entry_password.pack()
-        button_get_credit.pack()
-        text1.pack()
-
-root = tk.Tk()
-root.geometry("250x100")  # sets window size
-app = Application(root)
-root.mainloop()  # this kicks off tkinter window
+if __name__ == '__main__':
+    app = Application()
+    app.mainloop()
