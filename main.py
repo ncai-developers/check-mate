@@ -8,9 +8,9 @@ class Application(tk.Tk):  # for there's only one frame, so this will be the mai
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
-        # self.overrideredirect(1)  # enables full-screen functionality, but not change screen size
+        # self.overrideredirect(1)  # removes title bar
         # self.geometry("{}x{}".format(tk.Tk.winfo_screenwidth(self), tk.Tk.winfo_screenheight(self)))
-        self.geometry("400x400")
+        self.state('zoomed')  # full-screen without removing title bar
 
         self.container = tk.Frame(self)
         self.container.pack(side="top", fill="both", expand=True)
